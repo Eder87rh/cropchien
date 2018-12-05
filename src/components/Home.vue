@@ -2,7 +2,7 @@
     <v-container grid-list-xs>
         <v-layout row wrap>
             <v-flex  v-for="(dog, index) in dogs" :key="dog.id" xs12 md6 xl3 pa-2>
-                <v-card @click="$router.push({name: 'details', params:{ id:dog.id, dog:dogs[index] }})">
+                <v-card @click="$router.push({name: 'details', params:{ id:dog.id, dogProp:dogs[index] }})">
                     <v-img
                     height="170"
                     :src="dog.url"
@@ -17,47 +17,33 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        <v-btn @click="$router.push({ name: 'post'})"  color="red" dark fixed bottom right fab>
+            <v-icon>add</v-icon>
+        </v-btn>
     </v-container>
 </template>
 
 <script>
+import firebase from '../configFirebase.js'
+
 export default {
     data(){
         return{
-            dogs:[
-                {
-                    'id': 0,
-                    'url': 'https://images.dog.ceo/breeds/germanshepherd/n02106662_13904.jpg',
-                    'comment': 'Dog resting',
-                    'info': 'Posted by Eder on Friday'
-                },
-                {
-                    'id': 1,
-                    'url': 'https://images.dog.ceo/breeds/setter-gordon/n02101006_4491.jpg',
-                    'comment': 'Tongue dog',
-                    'info': 'Posted by Naye on Tuesday'
-                },
-                {
-                    'id': 2,
-                    'url': 'https://images.dog.ceo/breeds/terrier-australian/n02096294_1429.jpg',
-                    'comment': 'Terrier Australian dog',
-                    'info': 'Posted by Eder on Monday'
-                },
-                {
-                    'id': 3,
-                    'url': 'https://images.dog.ceo/breeds/mexicanhairless/n02113978_1595.jpg',
-                    'comment': 'Mexico Xoloitzcuintle',
-                    'info': 'Posted by Naye on Monday'
-                },
-                {
-                    'id': 4,
-                    'url': 'https://images.dog.ceo/breeds/dachshund/dog-495133_640.jpg',
-                    'comment': 'Sad dog',
-                    'info': 'Posted by Eder on Monday'
-                }
-            ]
+            dogs:[]
         }
+    },
+    mounted(){
+    firebase.db.collection('dogs').orderBy('created_at').onSnapshot((snapShot) => {
+            this.dogs=[];
+            snapShot.forEach((dog)  => {
+                this.dogs.push({
+                    id:dog.id,
+                    url:dog.data().url,
+                    comment:dog.data().comment,
+                    info:dog.data().info
+                })
+            });
+        });
     }
 }
 </script>
-
