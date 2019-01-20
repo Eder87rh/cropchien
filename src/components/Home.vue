@@ -33,7 +33,7 @@ export default {
         }
     },
     mounted(){
-    firebase.db.collection('dogs').orderBy('created_at').onSnapshot((snapShot) => {
+    firebase.db.collection('dogs').orderBy('created_at','desc').onSnapshot((snapShot) => {
             this.dogs=[];
             snapShot.forEach((dog)  => {
                 this.dogs.push({
