@@ -15,6 +15,6 @@ export default (url, comment, author) => {
             created_at: new Date().getTime()
         }
     ).then(
-        router.go(-1)
+        router.push({ name: 'home' })
     )
 }
