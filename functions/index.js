@@ -8,8 +8,8 @@ admin.initializeApp(functions.config().firebase);
 let firestore = admin.firestore()
 
 exports.GeneralSubscription = functions.https.onRequest((request, response) => {
-    console.log(request.body.token);
-
+    console.log('token',request.body.token);
+    
     cors(request,response,function(){
         axios.post(`https://iid.googleapis.com/iid/v1/${request.body.token}/rel/topics/general`,
         {},
@@ -19,15 +19,12 @@ exports.GeneralSubscription = functions.https.onRequest((request, response) => {
                 'Authorization': `key=${serverKey}`
             },
         }).then((res) => {
-            console.log(res);
-
             firestore.collection('tokens').add({
-                token:request.body.token
+                token: request.body.token
             }).then(ref => {
                 console.log('Document added ID: ', ref.id);
+                response.status(200).send(`notifications subscription successful`);
             });
-
-            response.status(200).send(`notifications subscription successful`);
         }).catch((err) => {
             console.log(err)
             console.log(err.response);
